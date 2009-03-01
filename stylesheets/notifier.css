@@ -1,0 +1,58 @@
+/* Used to display custom alerts and confirm boxes */
+
+.notifier {
+	position: absolute;
+	width: auto;
+	border: 1px solid black;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	z-index: 10000;
+}
+
+.notifier_content {
+	background-color: #3D3D3D;
+	padding: 15px;
+	color: white;
+  font-family: Tahoma, Helvetica, Arial, sans-serif;
+	width: 310px;
+	min-height: 60px;
+	border: 3px solid white;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+}
+
+.notifier.opaque {
+	opacity: 0.95;
+}
+
+.notifier.transparent {
+	opacity: 0;
+}
+
+.notifier .box_icon {
+	float: left;
+	padding-right: 8px;
+}
+
+.notifier .box_hide {
+  float: right;
+  background-image: url(../images/notify_remove.png); /* CHANGE THIS PATH */
+  width: 22px;
+  height: 22px;
+  display: block;
+  visibility: hidden;
+}
+
+.notifier:hover .box_hide, .notifier.hover .box_hide {
+	visibility: visible;
+}
+
+.notifier .box_title {
+	font-size: 16px;
+	font-weight: bold;
+	padding-bottom: 2px;
+}
+
+.notifier .box_message {
+	font-size: 13px;	
+}

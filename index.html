@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title>Demo 1</title>
+    <link href="stylesheets/notifier.css" type="text/css" rel="stylesheet">
+    <script src="javascripts/prototype.js" type="text/javascript" charset="utf-8"></script>
+    <script src="javascripts/animator.js" type="text/javascript" charset="utf-8"></script>
+    <script src="javascripts/notifier.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      document.observe('dom:loaded', function() {
+        $('demo-info').observe('click', function() {
+        	Notifier.alert("Message sent!", "Your message has been sent.", 'info');
+        });
+
+        $('demo-error').observe('click', function() {
+        	Notifier.alert("Message failed!", "Your message has failed to be sent.", 'error');
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1 id="prototype_notifier">Prototype Notifier</h1>
+    
+    <h2 id="example">EXAMPLE</h2>
+    
+    <ul>
+      <li><a id='demo-info' href='javascript:void(0);'>Click here for information notification</a></li>
+      <li><a id='demo-error' href='javascript:void(0);'>Click here for error notification</a></li>
+    </ul>
+
+    <h2 id="important">IMPORTANT</h2>
+
+    <p>This library came directly out of an application which is currently live. As such, the plugin does
+    work to an extent. However, it is extremely new and very rough. There is little support or respect
+    for internet explorer. It works in IE6+ but the alerts do not have rounded corners or other niceties.</p>
+
+    <p>I want to encourage anyone who is interested in this library to send me thoughts, suggestions,
+    or anything because I am looking to improve it greatly. Let me know if something is broken or 
+    could be better!</p>
+
+    <h2 id="preface">PREFACE</h2>
+
+    <p>This library was created with the intention of being a lightweight, prototype-based, alternative to the
+    native javascript alert tag. The alert tag is obnoxious, ugly, and modal. There are many times when 
+    the user should be notified of an event using javascript which could use a better option. </p>
+
+    <p>I looked around and found a few options out there for modal dialogs but none of them seemed right 
+    for the job. I want nothing more than a pleasant way to let the user know a validation failed, 
+    or a message was received. The best option I could find for prototype was a growl4rails plugin
+    found here: <a href="http://github.com/jfiorato/growl4rails/tree/master">growl4rails repository</a>.
+    I admit that plugin does a great job, but for my limited purposes I felt it was a bit too heavy.
+    The plugin includes helper methods for integrating the project with rails. I was looking
+    for a lightweight library that was server-side framework agnostic.</p>
+
+    <h2 id="installation">INSTALLATION</h2>
+
+    <p>First, copy over and include the necessary javascript, stylesheets and images 
+    into the appropriate places.</p>
+
+    <pre><code>&lt;link href="stylesheets/notifier.css" type="text/css" rel="stylesheet"&gt;
+    &lt;script src="javascripts/prototype.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="javascripts/animator.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    &lt;script src="javascripts/notifier.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;
+    </code></pre>
+
+    <p>The only dependencies for the notifier is prototype and animator. I should explain that I personally 
+    am not a fan of scriptaculous so this library uses the lightweight animator library which allows me 
+    to easily morph elements between states using simple css classes.</p>
+
+    <p>Once the notifier is properly included and the assets are copied over, it is likely the paths
+    for the images are not properly setup. I have not yet made this totally painless, but you may
+    want to check the notifier.js and notifier.css to ensure that image paths are correct. The place
+    specifying images is marked with the comment &#8220;CHANGE THIS PATH&#8221;</p>
+
+    <h2 id="usage">USAGE</h2>
+
+    <p>Using the notifier is as simple as invoking the command below:</p>
+
+    <pre><code>Notifier.alert("Message sent!", "Your message has been sent.", 'info');
+    </code></pre>
+
+    <p>Note this should be done once the document has been loaded. The full example would be:</p>
+
+    <pre><code>document.observe('dom:loaded', function() {
+        Notifier.alert("Message sent!", "Your message has been sent.", 'info');
+    });
+    </code></pre>
+
+    <p>There are two types of notifications right now: Informational and Error.</p>
+
+    <pre><code>Notifier.alert("Message sent!", "Your message has been sent.", 'info');
+    Notifier.alert("Server error!", "The server did not respond.", 'error');
+    </code></pre>
+
+    <p>Optionally, notifications can be displayed by firing a custom event as well:</p>
+
+    <pre><code>document.fire('notifier:alert', { title : "title", message : "message", category : "error" });
+    </code></pre>
+
+    <p>That is all there is to this right now. I can imagine adding support for custom images in the future.</p>
+
+    <h2 id="authors">AUTHORS</h2>
+
+    <p>Nathan Esquenazi (3/01/2009)</p>
+  </body>
+</html>
+
