@@ -81,8 +81,7 @@ var AlertNotification = Class.create({
 	},
 	// returns the box icon to be displayed based on the category
 	_getBoxIcon : function(category) {
-		imageValue = (category == null || category == 'info') ? 'info.png' : 'error.png';
-		return imageRoot + imageValue;
+		return imageRoot + (category || info) + '.png';
 	},
 	// positions the box in the center of the viewport
 	_positionBox : function() {

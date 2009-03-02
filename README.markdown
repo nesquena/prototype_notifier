@@ -69,7 +69,8 @@ Optionally, notifications can be displayed by firing a custom event as well:
 
     document.fire('notifier:alert', { title : "title", message : "message", category : "error" });
     
-That is all there is to this right now. I can imagine adding support for custom images in the future.
+That is all there is to this right now. You can add custom images by simply adding 'xxx.png' to the same location as
+the other icons and then specify the category as 'xxx'.
 
 AUTHORS
 -------
