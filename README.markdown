@@ -72,6 +72,8 @@ Optionally, notifications can be displayed by firing a custom event as well:
 That is all there is to this right now. You can add custom images by simply adding 'xxx.png' to the same location as
 the other icons and then specify the category as 'xxx'.
 
+Note that the notifications are internally managed in a queue. Each time you invoke an alert, the alert is added to the pending notification queue. Only 3 notifications can be displayed on the screen at a given time. The rest of the notifications will be displayed in batches of 3 until the pending queue is empty.
+
 AUTHORS
 -------
 
