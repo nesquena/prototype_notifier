@@ -17,9 +17,18 @@ Examples:
 imageRoot = "images/"; // CHANGE THIS PATH TO THE IMAGES
 
 var Notifier = {
+	pendingQueue : [], // queue of notifications
 	// creates the growl html structure, attaches events and displays the alert for 3 seconds
 	alert : function(title, message, category) {
-    this._createBox('alert', title, message, category);
+     this.pendingQueue.push({ 'heading' : title, 'message' : message, 'category' : category });
+     this._showNextNotification();
+	},
+	// displays the next notification within the queue
+	_showNextNotification : function() {
+		if (Notifier.isCreated()) { return; } // only start if queue isn't started
+		var notifyBox = Notifier.pendingQueue.pop();
+		if (notifyBox == null) { return; } // stop if there are no more items on the queue
+		this._createBox('alert', notifyBox.heading, notifyBox.message, notifyBox.category);
 	  this._appearBox(3);
 	},
 	// positions the box, animate appears the box and then hides it after specified seconds
@@ -46,6 +55,7 @@ var Notifier = {
 		if (Notifier.isDestroyed()) { return; }
 		Notifier._detachEvents(); 
 		$('notifier_box').remove(); 
+		Notifier._showNextNotification();
 	},
 	// connects the events for repositioning and closing the box
 	_attachEvents : function() {
