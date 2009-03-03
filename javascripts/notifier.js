@@ -20,10 +20,6 @@ var AlertNotification = Class.create({
 	initialize : function(heading, message, category) {
 		this.heading = heading; this.message = message; this.category = category;
 	},
-	// return true if the alert can execute
-	canExecute : function(position) {
-		return ($('notifier_box_' + position) == null);
-	},
 	// execute this alert notification
 	execute : function(position, heightOffset) {
 		this._createBox(position, heightOffset);
@@ -56,7 +52,7 @@ var AlertNotification = Class.create({
 	_removeBox : function() {
 		this._detachEvents(); 
 		this.element.remove(); 
-		this.onComplete.bind(this).delay(1, this);
+		this.onComplete(this);
 	},
 	// connects the events for repositioning and closing the box
 	_attachEvents : function() {
@@ -81,7 +77,7 @@ var AlertNotification = Class.create({
 	},
 	// returns the box icon to be displayed based on the category
 	_getBoxIcon : function(category) {
-		return imageRoot + (category || info) + '.png';
+		return imageRoot + (category || 'info') + '.png';
 	},
 	// positions the box in the center of the viewport
 	_positionBox : function() {
@@ -98,50 +94,47 @@ var AlertNotification = Class.create({
 
 var Notifier = {
 	pendingBoxes : [], // queue of pending notifications
-	activeBoxes : [], // queue of active notifications
+	activeBoxes : [], // list of active visible notifications this round,
+	completedBoxes : [], // list of completed boxes this round,
 	maxToDisplay : 3, // number of notifications to display at once
 	// creates the growl html structure, attaches events and displays the alert for 3 seconds
 	alert : function(heading, message, category) {
-		 var newAlert = new AlertNotification(heading, message, category);
-     this.pendingBoxes.push(newAlert);
-     this._showPendingNotifications();
+		var newAlert = new AlertNotification(heading, message, category);
+		this.pendingBoxes.push(newAlert);
+		this._showNextNotification();
 	},
-	// displays the next notifications within the queue
-	_showPendingNotifications : function() {
-		while (this._canDisplayMore()) { this._showNextNotification(); }
-	},
-	// displays the next pending notification
-	_showNextNotification : function(notifyBox) {
-		var notifyBox = Notifier.pendingBoxes.shift();
+	// shows the next pending notification
+	_showNextNotification : function() {
+		if (this.pendingBoxes.length <= 0 || this._currentRoundIsFull()) { return; }
+		var notifyBox = this.pendingBoxes.shift();
 		notifyBox.onComplete = this._boxCompleted;
-		var position = Notifier._getBoxCount();
-		if (notifyBox.canExecute(position)) {
-			notifyBox.execute(position, Notifier._getHeightOffset()); // show the next alert
-			this.activeBoxes.push(notifyBox);	
-		} else { // cannot execute so push back onto pending
-			this.pendingBoxes.push(notifyBox);
-		}
+		notifyBox.execute(this.activeBoxes.length, this._getHeightOffset());
+		this.activeBoxes.push(notifyBox);
+		this._showNextNotification();
 	},
-	// fires when a box has been finished displaying
+	// fires when a box has finished displaying
 	_boxCompleted : function(notifyBox) {
-		Notifier.activeBoxes.removeItem(notifyBox); 
-		if (Notifier._readyForNextRound()) { Notifier._showPendingNotifications(); }
+		Notifier.activeBoxes.removeItem(notifyBox); Notifier.completedBoxes.push(notifyBox);
+		if (Notifier._isRoundComplete()) { Notifier._startNextRound();  } 
 	},
-  // returns the number of boxes being displayed
-	_getBoxCount : function() {
-		return $$('.notifier').length;
+	// returns true if additional notifications can appear on screen
+	_currentRoundIsFull : function() {
+		var totalBoxesInRound = Notifier.activeBoxes.length + Notifier.completedBoxes.length;
+		return totalBoxesInRound >= this.maxToDisplay;
+	},
+	// returns true if the round is completed
+	_isRoundComplete : function() {
+		return Notifier.activeBoxes.length == 0;
+	},
+	// clears the boxes from the current round
+	_startNextRound : function() {
+		Notifier.activeBoxes = [];
+		Notifier.completedBoxes = [];
+		Notifier._showNextNotification();
 	},
 	// returns the current display height to aid in positioning messages
 	_getHeightOffset : function() {
 		return Notifier.activeBoxes.collect(function(e) { return e.getHeight(); }).inject(0, function(sum, value) { return sum + value; });
-	},
-	// returns true if more boxes can be displayed on screen
-	_canDisplayMore : function() {
-		return (Notifier.pendingBoxes.length > 0) && (Notifier._getBoxCount() < Notifier.maxToDisplay);
-	},
-  // returns true when the next round of notifications should be displayed
-	_readyForNextRound : function() {
-		return Notifier._getBoxCount() == 0 && Notifier.pendingBoxes.length > 0;
 	}
 };
 
